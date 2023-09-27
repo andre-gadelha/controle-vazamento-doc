@@ -24,6 +24,7 @@ class DocumentFormRequest extends FormRequest
         return [
             //
             'autor' => 'required',
+            'nome' => 'required',
             'funcao' => 'required',
             'identidade' => 'required',
             'document' => 'required',
@@ -33,7 +34,8 @@ class DocumentFormRequest extends FormRequest
     public function messages()
     {
         return [
-            'autor' => 'Informe o autor;',
+            'autor' => 'Informe o controlador;',
+            'nome' => 'Informe o nome da lista de distribuição;',
             'funcao' => 'Informe a função;',
             'identidade' => 'Informe a Identidade;',
             'document' => 'Adicione o documento;',

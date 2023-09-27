@@ -16,7 +16,7 @@ use App\Http\Controllers\DocumentController;
 
 Route::get('/', function () {
     return view('app');
-});
+})->name('home');
    
 Route::get('/document', [DocumentController::class, 'index'])->name('document');
 Route::post('/document/store', [DocumentController::class, 'store'])->name('document.store');

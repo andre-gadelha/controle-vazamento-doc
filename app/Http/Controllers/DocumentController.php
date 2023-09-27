@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\DocumentRequest;
 use App\Http\Requests\DocumentFormRequest;
 use Carbon\Traits\Options;
+use DB;
 use Illuminate\Http\Request;
 use setasign\Fpdi\Fpdi;
 use Codedge\Fpdf\Fpdf\Fpdf;
+use App\Models\Document;
 
 
 class DocumentController extends Controller
@@ -40,17 +42,31 @@ class DocumentController extends Controller
     public function store(DocumentFormRequest $request){
 
         //Usando FPDI para adicionar Marca d'água em arquivo PDF
-
-        //dd($request->file(key:'document'));
+        
+        $hashIdentidade = md5($request->input(key:'identidade'));//Gera e armazena o hash MD5 da idntidade informada 
         $nameFile = $request->file(key:'document')->getClientOriginalName(); //Armazena nome do arquivo
         $documentPath = $request->file(key:'document')->storeAs(path:'pdf', name:"$nameFile", options:'public');//Armazena o patth do arquivo 
+        $autorDoControle = $request->input(key: 'autor');
+        $receptorDoDocumento = $request->input(key: 'nome');
+        $funcaoDoReceptor = $request->input(key: 'funcao');
+        $identidadeDoReceptor = $request->input(key: 'identidade');  
+        //dd($);
+
 
         $request->documentPath = $documentPath;//adicionando a variável $documentPath ao Request(servirá para recuperação da variavel no Request utilizado ao persistir no banco de dados)
 
         // Source file and watermark config 
         $file = storage_path('app/public/'. $documentPath .''); 
         
-        $text = 'sef.eb.mil.br';
+        //ADICIONAR NO BANCO DE DADOS
+        //$document = new Document();//Objeto que pode ser utilizado em caso da utilização do ELOQUENT ORM
+        DB::insert(query:'INSERT INTO documents 
+            (authorControlDocument,         nameReceiverDocument,           funcntionReceiverDocument,      identityReceiverDocument,           nameDocument,         rashDocument) 
+            values 
+            ("' . $autorDoControle . '",    "' . $receptorDoDocumento . '", "' . $funcaoDoReceptor . '",    "' . $identidadeDoReceptor . '",    "' . $nameFile . '",  "' . $hashIdentidade . '")');
+        //DB::insert(query:'INSERT INTO documents (authorControlDocument, nameReceiverDocument, funcntionReceiverDocument, identityReceiverDocument, nameDocument, rashDocument) values (?,?,?,?,?,?)', [$nameFile, $nameFile, $nameFile, $nameFile, $nameFile, $nameFile] );
+
+        $text = $hashIdentidade;
         $path_image = '';  
 
         // Set source PDF file 
@@ -59,8 +75,8 @@ class DocumentController extends Controller
         $pagecount = $pdf->setSourceFile($file); 
         
         // Text font settings 
-        $pdf->SetFont('helvetica','I', 20); 
-        $pdf->SetTextColor(205,100,60);//Texto vermelho
+        $pdf->SetFont('helvetica','I', 10); 
+        $pdf->SetTextColor(248,215,218);//Texto vermelho transparente
         $ts = explode("\n", $text); 
         $width = 0; 
         
@@ -86,59 +102,49 @@ class DocumentController extends Controller
             //Primeira Linha
             $pdf->Text(10, 10, $text);
             $pdf->Text(80, 10, $text);
-            $pdf->Text(160, 10, $text);
+            $pdf->Text(150, 10, $text);
 
             //Segunda Linha
-            $pdf->Text(01, 60, $text);
-            $pdf->Text(80, 60, $text);
-            $pdf->Text(160, 60, $text);
+            $pdf->Text(10, 50, $text);
+            $pdf->Text(80, 50, $text);
+            $pdf->Text(150, 50, $text);
 
             //Terceira Linha
-            $pdf->Text(10, 110, $text);
-            $pdf->Text(80, 110, $text);
-            $pdf->Text(160, 110, $text);
+            $pdf->Text(10, 90, $text);
+            $pdf->Text(80, 90, $text);
+            $pdf->Text(150, 90, $text);
 
             //Quarta Linha
-            $pdf->Text(01, 160, $text);
-            $pdf->Text(80, 160, $text);
-            $pdf->Text(160, 160, $text);
+            $pdf->Text(10, 130, $text);
+            $pdf->Text(80, 130, $text);
+            $pdf->Text(150, 130, $text);
 
             //Quinta Linha
-            $pdf->Text(10, 210, $text);
-            $pdf->Text(80, 210, $text);
-            $pdf->Text(160, 210, $text);
+            $pdf->Text(10, 170, $text);
+            $pdf->Text(80, 170, $text);
+            $pdf->Text(150, 170, $text);
 
             //Sexta Linha
-            $pdf->Text(01, 260, $text);
-            $pdf->Text(80, 260, $text);
-            $pdf->Text(160, 260, $text);    
+            $pdf->Text(10, 210, $text);
+            $pdf->Text(80, 210, $text);
+            $pdf->Text(150, 210, $text);
+            
+            //Sétima Linha
+            $pdf->Text(10, 250, $text);
+            $pdf->Text(80, 250, $text);
+            $pdf->Text(150, 250, $text);
+
+            //Oitava Linha
+            $pdf->Text(10, 290, $text);
+            $pdf->Text(80, 290, $text);
+            $pdf->Text(150, 290, $text);
+
         } 
         
         // Output PDF with watermark 
-        $pdf->Output();
-    }
-    
-    /*
-    public function store(Request $request)
-    {
-        $request->validate([
-            'file' => 'required|mimes:pdf,xlx,csv|max:2048',
-        ]);
-    
-        $fileName = time().'.'.$request->file->extension();  
-     
-        $request->file->move(public_path('uploads'), $fileName);
-   
-         
-           // Write Code Here for
-            //Store $fileName name in DATABASE from HERE 
-        
-     
-        return back()
-            ->with('success','You have successfully upload file.')
-            ->with('file', $fileName);
-   
-    }
-    */
+        $pdf->Output('D', 'document.pdf');
 
+        return redirect(to: '/document');
+    }
+    
 }

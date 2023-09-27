@@ -13,6 +13,7 @@
          <!-- Styles -->
          <link rel="stylesheet" href="{{ asset('css/app.css') }}">
          <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
         <!-- Styles -->
         <style>
@@ -27,6 +28,11 @@
                 <div class="max-w-7xl mx-auto p-6 lg:p-8">                       
                     <!--Corpo do formulário de UPLOAD-->
                         <div class="row mb-3">
+                            
+                            <center>
+                                <a href="{{ route('home') }}"><i class="fa fa-home" style="font-size:36px"></i></a>
+                            </center><br>
+
                             <center>
                                 <p><b>Dados para identificar documento<b></p>
                             </center><br>     
@@ -46,8 +52,18 @@
 
                             <div class="row mb-3">
                                 <div class="col-12">
-                                    <label for="autor" class="form-label">Nome do autor:</label>
-                                    <input type="text" id="autor" name="autor" size="55" maxlength="50" value="{{ old('autor') }}" class="form-control">
+                                    <label for="autor" class="form-label">Controlador:</label>
+                                    <select name="autor" id="autor" value="{{ old('autor') }}" class="form-control">
+                                        <option value="" select></option>
+                                        <option value="SG2">SG2</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label for="nome" class="form-label">Nome (na lista de distribuição):</label>
+                                    <input type="text" id="nome" name="nome" size="55" maxlength="50" value="{{ old('nome') }}" class="form-control">
                                 </div>
                             </div>
 
@@ -73,7 +89,7 @@
                             </div>
 
                             <center>   
-                                <input type="submit" class="btn btn-outline-primary" value="Enviar"></p></td>   
+                            <input type="reset" class="btn btn-outline-danger" value="Cancelar"> <input type="submit" class="btn btn-outline-success" value="Enviar">   
                             </center>
                         </div>                  
                 </div>
